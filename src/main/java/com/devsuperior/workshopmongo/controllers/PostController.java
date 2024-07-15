@@ -1,5 +1,9 @@
 package com.devsuperior.workshopmongo.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.time.Instant;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,5 +35,18 @@ public class PostController {
 	public Flux<PostDTO> findByTitle(@RequestParam(value = "text", defaultValue = "") String text) throws Exception {
 		text = URL.decodeParam(text);
 		return service.findByTitle(text);
+	}
+	
+	@GetMapping(value = "/fullsearch")
+	public Flux<PostDTO> fullSearch(
+			@RequestParam(value = "text", defaultValue = "") String text,
+			@RequestParam(value = "minDate", defaultValue = "") String minDate,
+			@RequestParam(value = "maxDate", defaultValue = "") String maxDate) throws UnsupportedEncodingException, ParseException {
+		
+		text = URL.decodeParam(text);
+		Instant min = URL.convertDate(minDate, Instant.EPOCH);
+		Instant max = URL.convertDate(maxDate, Instant.now());
+		
+		return service.fullSearch(text, min, max);
 	}
 }
