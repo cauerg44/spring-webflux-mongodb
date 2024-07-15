@@ -7,6 +7,7 @@ import com.devsuperior.workshopmongo.dto.PostDTO;
 import com.devsuperior.workshopmongo.repositories.PostRepository;
 import com.devsuperior.workshopmongo.services.exceptioons.ResourceNotFoundException;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -19,5 +20,10 @@ public class PostService {
 		return repository.findById(id)
 				.map(existingPost -> new PostDTO(existingPost))
 				.switchIfEmpty(Mono.error(new ResourceNotFoundException("Post not found.")));
+	}
+	
+	public Flux<PostDTO> findByTitle(String text) {
+		return repository.searchTitle(text)
+				.map(postFound -> new PostDTO(postFound));
 	}
 }
